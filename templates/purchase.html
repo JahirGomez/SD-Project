@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Compra</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script>
+        function submitForm(event) {
+            event.preventDefault();
+            const form = document.getElementById('purchaseForm');
+            const formData = new FormData(form);
+            const data = {
+                location: formData.get('location'),
+                pokemon: formData.get('pokemon')
+            };
+            const token = localStorage.getItem('authToken');
+
+            if (!token) {
+                alert('Debes iniciar sesión primero.');
+                window.location.href = '/login';
+                return;
+            }
+
+            fetch('/purchase', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert('Compra realizada con éxito');
+                    window.location.href = '/purchase-result';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                alert('Debes iniciar sesión primero.');
+                window.location.href = '/login';
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Bienvenido a la Página de Compra</h1>
+        <form id="purchaseForm" onsubmit="submitForm(event)">
+            <label for="location">Ubicación:</label>
+            <input type="text" id="location" name="location" required>
+            <label for="pokemon">Pokémon:</label>
+            <input type="text" id="pokemon" name="pokemon" required>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado de la Compra</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .qr-code {
+            width: 150px;  /* Ajusta el ancho del código QR */
+            height: 150px;  /* Ajusta la altura del código QR */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Resultado de la Compra</h1>
+        <div class="info-section">
+            <h2>Ubicación: {{ purchase['location'] }}</h2>
+        </div>
+        <div class="info-section">
+            <h3>Información del País</h3>
+            <p><strong>País:</strong> {{ purchase['country_info']['name'] }}</p>
+            <p><strong>Capital:</strong> {{ purchase['country_info']['capital'] }}</p>
+            <p><strong>Continente:</strong> {{ purchase['country_info']['continent'] }}</p>
+            <p><strong>Moneda:</strong> {{ purchase['country_info']['currency'] }}</p>
+            <p><strong>Código Telefónico:</strong> {{ purchase['country_info']['phone_code'] }}</p>
+        </div>
+        <div class="info-section">
+            <h3>Información del Pokémon</h3>
+            <p><strong>Nombre:</strong> {{ purchase['pokemon']['name'] }}</p>
+            <p><strong>Habilidades:</strong> 
+                {% for ability in purchase['pokemon']['abilities'] %}
+                    {{ ability['ability']['name'] }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+            <p><strong>Experiencia Base:</strong> {{ purchase['pokemon']['base_experience'] }}</p>
+            <p><strong>Altura:</strong> {{ purchase['pokemon']['height'] }} decímetros</p>
+            <p><strong>Peso:</strong> {{ purchase['pokemon']['weight'] }} hectogramos</p>
+            <p><strong>Tipos:</strong> 
+                {% for type in purchase['pokemon']['types'] %}
+                    {{ type['type']['name'] }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+        </div>
+        <div class="info-section">
+            <h3>Información del Precio</h3>
+            <p><strong>Precio en USD:</strong> ${{ purchase['price_in_usd'] }}</p>
+            <p><strong>Precio en Moneda Local:</strong> {{ purchase['price_in_local_currency'] }} {{ purchase['country_info']['currency'] }}</p>
+        </div>
+        <div class="info-section signature">
+            <h3>Firma Digital</h3>
+            <div>
+                <img class="qr-code" src="data:image/png;base64,{{ qr_code }}" alt="QR Code">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
